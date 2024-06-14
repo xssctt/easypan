@@ -1,0 +1,45 @@
+import mapSelect from '@/components/map/mapSelect.vue'
+ 
+components: {
+    mapSelect,
+},
+<!-- 地图选点 -->
+<mapSelect @chooseOrgAddr="chooseOrgAddr" ref="ref"></mapSelect>
+
+
+
+// 选取地理位置后的回调
+chooseOrgAddr(data){
+    // console.log(data)
+    this.info.latitude = data.lat
+    this.info.longitude = data.lng
+    this.$refs.ref.closeDialog()
+},
+
+
+
+        // 选择
+        getInfo(){
+            let that = this
+            window.addEventListener('message', function(event) {
+            // 接收位置信息，用户选择确认位置点后选点组件会触发该事件，回传用户的位置信息
+            var loc = event.data;
+            //   console.log(loc)
+            if (loc && loc.module == 'locationPicker') { //防止其他应用也会向该页面post信息，需判断module是否为'locationPicker'
+                that.map_data.address = loc.poiaddress
+                that.map_data.lat = loc.latlng.lat
+                that.map_data.lng = loc.latlng.lng
+                //调用父组件方法并传值给父组件
+                // console.log('map_data', that.map_data);
+                that.$emit('chooseOrgAddr',that.map_data)
+            }
+            }, false);
+        },
+        // 父组件调用方法,打开模态框
+        openDialog() {
+            this.isDialog = true
+        },
+        // 关闭模态框
+        closeDialog() {
+            this.isDialog = false
+        },

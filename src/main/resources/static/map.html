@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+            name="viewport"
+            content="initial-scale=1.0, user-scalable=no, width=device-width"
+    />
+    <title>HELLO，AMAP!</title>
+    <style>
+        html,
+        body,
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+
+<script type="text/javascript">
+    window._AMapSecurityConfig = {
+        securityJsCode: "22add44f962fbb72d98928ac9288eff7",
+    };
+</script>
+<script src="https://webapi.amap.com/loader.js"></script>
+<script type="text/javascript">
+
+    window._AMapSecurityConfig = {
+        // 安全密钥
+        securityJsCode: '22add44f962fbb72d98928ac9288eff7',//高德地图申请key值的秘钥
+    };
+    const form = reactive({
+        lat: '',//纬度
+        lng: '',//经度
+        address: '',//地址
+        adcode: '',
+    });
+    let map = null; //地图
+    const keywords = ref('');
+    const marker = ref('');
+    const geoCoder = ref('');
+    const options = ref([]);
+    const loadings = ref(false);
+    // 搜索提示
+    const AutoComplete = ref(null);
+    const mapapply = () => {
+        AMapLoader.load({
+            key: '2cb60e439b4b03d3a80f0f034de00285', // 申请好的Web端开发者Key，首次调用 load 时必填
+            version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+            plugins: ['AMap.Scale', 'AMap.Geocoder', 'AMap.AutoComplete'], //需要使用的的插件列表，如比例尺'AMap.Scale'，支持添加多个如：['...','...']
+        })
+            .then((AMap) => {
+                console.log(AMap);
+                map = new AMap.Map('container', {
+                    // 设置地图容器id
+                    viewMode: '3D', // 是否为3D地图模式
+                    zoom: 11, // 初始化地图级别
+                    center: [116.397428, 39.90923], // 初始化地图中心点位置
+                });
+                geoCoder.value = new AMap.Geocoder({
+                    city: '010', //城市设为北京，默认：“全国”
+                    radius: 1000, //范围，默认：500
+                });
+                if (form.lng != '' || form.lat != '' || form.address != '') {
+                    setMapMarker();
+                }
+                AutoComplete.value = new AMap.AutoComplete({ city: '全国' });
+                map.on('click', showInfoClick);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
+    const showInfoClick = (e) => {
+        removeMarker();
+        form.lat = e.lnglat.getLat();
+        form.lng = e.lnglat.getLng();
+        console.log('您在 [ ' + e.lnglat.getLng() + ',' + e.lnglat.getLat() + ' ] 的位置单击了地图！');
+        console.log(e);
+        setMapMarker();
+        toGeoCoder();
+        console.log(form);
+    };
+    // 标记点
+    const setMapMarker = () => {
+        // 自动适应显示想显示的范围区域
+        map.setFitView();
+        marker.value = new AMap.Marker({
+            map: map,
+            position: [form.lng, form.lat],
+        });
+        map.setFitView();
+        map.add(marker.value);
+    };
+    const removeMarker = () => {
+        if (marker.value) {
+            map.remove(marker.value);
+        }
+    };
+    const toGeoCoder = () => {
+        let lnglat = [form.lng, form.lat];
+        console.log(lnglat);
+        geoCoder.value.getAddress(lnglat, function (status, result) {
+            console.log(status, result);
+            if (status === 'complete' && result.regeocode) {
+                form.address = result.regeocode.formattedAddress;
+                keywords.value = result.regeocode.formattedAddress;
+            }
+        });
+    };
+    // 搜索
+    const remoteMethod = (query) => {
+        console.log(query);
+        if (query !== '') {
+            loadings.value = true;
+            setTimeout(() => {
+                loadings.value = false;
+                AutoComplete.value.search(query, (status, result) => {
+                    options.value = result.tips;
+                });
+            }, 200);
+            console.log(options);
+        } else {
+            options.value = [];
+        }
+    };
+    // 选中提示
+    const currentSelect = (val) => {
+        // 清空时不执行后面代码
+        if (!val) {
+            return;
+        }
+        form.lng = val.location.lng;
+        form.lat = val.location.lat;
+        form.address = val.district + val.address;
+        form.adcode = val.adcode;
+        // 清除点
+        removeMarker();
+        // 标记点
+        setMapMarker();
+    };
+</script>
+</body>
+</html>

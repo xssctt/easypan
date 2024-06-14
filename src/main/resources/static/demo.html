@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <template>
+        <div id="container">111111</div>
+    </template>
+</div>
+
+<!-- Import Vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!-- Import AMapLoader -->
+<script src="https://webapi.amap.com/maps?v=2.0&key=2cb60e439b4b03d3a80f0f034de00285"></script>
+<script type="text/javascript">
+    window._AMapSecurityConfig = {
+        securityJsCode: "22add44f962fbb72d98928ac9288eff7",
+    };
+</script>
+<!-- Main JavaScript -->
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                form: {
+                    lat: '', // 纬度
+                    lng: '', // 经度
+                    address: '', // 地址
+                    adcode: ''
+                },
+                map: null, // 地图
+                keywords: '',
+                marker: null,
+                geoCoder: null,
+                options: [],
+                loadings: false,
+                AutoComplete: null
+            };
+        },
+        mounted() {
+            this.mapapply();
+        },
+        methods: {
+            mapapply() {
+                AMapLoader.load({
+                    key: '2cb60e439b4b03d3a80f0f034de00285', // 申请好的Web端开发者Key，首次调用 load 时必填
+                    version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+                    plugins: ['AMap.Scale', 'AMap.Geocoder', 'AMap.AutoComplete'] //需要使用的的插件列表，如比例尺'AMap.Scale'，支持添加多个如：['...','...']
+                }).then((AMap) => {
+                    console.log(AMap);
+                    this.map = new AMap.Map('container', {
+                        // 设置地图容器id
+                        viewMode: '3D', // 是否为3D地图模式
+                        zoom: 11, // 初始化地图级别
+                        center: [116.397428, 39.90923] // 初始化地图中心点位置
+                    });
+                    this.geoCoder = new AMap.Geocoder({
+                        city: '010', // 城市设为北京，默认：“全国”
+                        radius: 1000 // 范围，默认：500
+                    });
+                    if (this.form.lng !== '' || this.form.lat !== '' || this.form.address !== '') {
+                        this.setMapMarker();
+                    }
+                    this.AutoComplete = new AMap.AutoComplete({ city: '全国' });
+                    this.map.on('click', this.showInfoClick);
+                }).catch((e) => {
+                    console.log(e);
+                });
+            },
+            showInfoClick(e) {
+                this.removeMarker();
+                this.form.lat = e.lnglat.getLat();
+                this.form.lng = e.lnglat.getLng();
+                console.log('您在 [ ' + e.lnglat.getLng() + ',' + e.lnglat.getLat() + ' ] 的位置单击了地图！');
+                console.log(e);
+                this.setMapMarker();
+                this.toGeoCoder();
+                console.log(this.form);
+            },
+            setMapMarker() {
+                this.map.setFitView();
+                this.marker = new AMap.Marker({
+                    map: this.map,
+                    position: [this.form.lng, this.form.lat]
+                });
+                this.map.setFitView();
+                this.map.add(this.marker);
+            },
+            removeMarker() {
+                if (this.marker) {
+                    this.map.remove(this.marker);
+                }
+            },
+            toGeoCoder() {
+                let lnglat = [this.form.lng, this.form.lat];
+                console.log(lnglat);
+                this.geoCoder.getAddress(lnglat, (status, result) => {
+                    console.log(status, result);
+                    if (status === 'complete' && result.regeocode) {
+                        this.form.address = result.regeocode.formattedAddress;
+                        this.keywords = result.regeocode.formattedAddress;
+                    }
+                });
+            },
+            remoteMethod(query) {
+                console.log(query);
+                if (query !== '') {
+                    this.loadings = true;
+                    setTimeout(() => {
+                        this.loadings = false;
+                        this.AutoComplete.search(query, (status, result) => {
+                            this.options = result.tips;
+                        });
+                    }, 200);
+                    console.log(this.options);
+                } else {
+                    this.options = [];
+                }
+            },
+            currentSelect(val) {
+                if (!val) {
+                    return;
+                }
+                this.form.lng = val.location.lng;
+                this.form.lat = val.location.lat;
+                this.form.address = val.district + val.address;
+                this.form.adcode = val.adcode;
+                this.removeMarker();
+                this.setMapMarker();
+            }
+        }
+    });
+</script>
+</body>
+</html>
