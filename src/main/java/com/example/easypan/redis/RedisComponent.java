@@ -51,16 +51,29 @@ public class RedisComponent {
             userSpaceDto=new UserSpaceDto();
             userSpaceDto.setTotalUserSpace(getSysSetting().getUserInitUserSpace()*Constants.MB);
             // TODO 需要查询用户使用的
-            Long userSpace = fileInfoMapper.selectUserSpace(userinfoId);
-            userSpaceDto.setUserSpace(userSpace);
+            Long useSpace = fileInfoMapper.selectUserSpace(userinfoId);
+            userSpaceDto.setUserSpace(useSpace);
             setUserSpaceuse(userinfoId,userSpaceDto);
         }
         return userSpaceDto;
     }
 
+
+
+
+
     //临时文件大小放缓存
+
+    /**
+     *
+     * @param userId
+     * @param fileId
+     * @param fileSize  每一片大小
+     */
     public void saveFileTempSize(String userId,String fileId,Long fileSize){
         Long currentSize = getFileTempSize(userId, fileId);
+
+        //currentSize+fileSize  累计 用户总共用多少
         redisUtil.setCacheObject(Constants.REDIS_KEYS_USER_TEMP_SIZE+userId+fileId,
                 currentSize+fileSize,
                 Constants.REDIS_KEY_EXPIRE_ONE_HOUR,
@@ -87,5 +100,17 @@ public class RedisComponent {
         }
 
         return 0L;
+    }
+
+
+    /**
+     *
+     * @param userId
+     * @param fileId
+     */
+    public void deleteTempFile(String userId,String fileId){
+        String key=Constants.REDIS_KEYS_USER_TEMP_SIZE+userId+fileId;
+        redisUtil.expire(key,0);
+        //redisUtil.deleteObject(key);
     }
 }

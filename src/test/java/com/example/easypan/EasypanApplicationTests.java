@@ -7,6 +7,7 @@ import com.example.easypan.Util.StringTools;
 import com.example.easypan.bean.Constants;
 import com.example.easypan.config.AppConfig;
 import com.example.easypan.config.EmailConfig;
+import com.example.easypan.enums.FileTypeEnum;
 import com.example.easypan.redis.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,14 +61,16 @@ class EasypanApplicationTests {
     @Test
     void context() {
 
+      String a="aaaa/cvcccfff/bbb.vv";
+
+        System.out.println(a.substring(0,a.indexOf("/")));
 
 
-
-
-        String avatarFloderName=Constants.FILE_FOLDER_FILE+Constants.FILE_FOLDER_AVATAR_NAME;
-        String avatarFloderPath=appConfig.getPath()+avatarFloderName;
-        System.out.println(new File(avatarFloderPath).getPath());
-        System.out.println(avatarFloderPath);
+//
+//        String avatarFloderName=Constants.FILE_FOLDER_FILE+Constants.FILE_FOLDER_AVATAR_NAME;
+//        String avatarFloderPath=appConfig.getPath()+avatarFloderName;
+//        System.out.println(new File(avatarFloderPath).getPath());
+//        System.out.println(avatarFloderPath);
 //        if (!new File(avatarFloderPath+ Constants.AVATAR_DEFULT).exists()){
 //
 //            System.out.println("21222222");

@@ -132,6 +132,9 @@
 			<if test= "query.recoveryTimeEnd != null and query.recoveryTimeEnd!= '' ">
 				 <![CDATA[ and recovery_time < date_sub( str_to_date(#{query.recoveryTimeEnd}, '%Y-%m-%d' ),interval -1 day) ]]>
 			</if>
+			 <if test="query.fileIdArray != null and query.fileIdArray.length > 0">
+			 		and file_id in (<foreach collection="query.fileIdArray" item="item" separator=",">#{item}</foreach>)
+			 </if>
 	</sql>
 	<!--   扩展查询条件汇总 -->
 	<sql id="query_condition">
@@ -512,5 +515,60 @@
 	from file_info
 	where user_id=#{userId}
 	</select>
+
+	<update id="updateFileStatusWithOldStatus" parameterType="com.example.easypan.entity.po.FileInfo">
+		UPDATE  file_info
+		<set>
+			<if test="bean.fileId != null" >
+				file_id=#{bean.fileId},
+			</if>
+			<if test="bean.userId != null" >
+				user_id=#{bean.userId},
+			</if>
+			<if test="bean.fileMd5 != null" >
+				file_md5=#{bean.fileMd5},
+			</if>
+			<if test="bean.filePid != null" >
+				file_pid=#{bean.filePid},
+			</if>
+			<if test="bean.fileSize != null" >
+				file_size=#{bean.fileSize},
+			</if>
+			<if test="bean.fileName != null" >
+				file_name=#{bean.fileName},
+			</if>
+			<if test="bean.fileCover != null" >
+				file_cover=#{bean.fileCover},
+			</if>
+			<if test="bean.filePath != null" >
+				file_path=#{bean.filePath},
+			</if>
+			<if test="bean.createTime != null" >
+				create_time=#{bean.createTime},
+			</if>
+			<if test="bean.lastUpdateTime != null" >
+				last_update_time=#{bean.lastUpdateTime},
+			</if>
+			<if test="bean.folderType != null" >
+				folder_type=#{bean.folderType},
+			</if>
+			<if test="bean.fileCategory != null" >
+				file_category=#{bean.fileCategory},
+			</if>
+			<if test="bean.fileType != null" >
+				file_type=#{bean.fileType},
+			</if>
+			<if test="bean.status != null" >
+				status=#{bean.status},
+			</if>
+			<if test="bean.recoveryTime != null" >
+				recovery_time=#{bean.recoveryTime},
+			</if>
+			<if test="bean.delFlag != null" >
+				del_flag=#{bean.delFlag}
+			</if>
+		</set>
+		where file_id=#{fileId} and user_id=#{userId} and status=#{oldStatus}
+	</update>
 
 </mapper>

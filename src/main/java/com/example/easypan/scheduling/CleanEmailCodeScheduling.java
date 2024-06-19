@@ -1,13 +1,13 @@
-package com.example.easypan.scheduling;
-
-import com.example.easypan.entity.po.EmailCode;
-import com.example.easypan.entity.query.EmailCodeQuery;
-import com.example.easypan.mappers.EmailCodeMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
+//package com.example.easypan.scheduling;
+//
+//import com.example.easypan.entity.po.EmailCode;
+//import com.example.easypan.entity.query.EmailCodeQuery;
+//import com.example.easypan.mappers.EmailCodeMapper;
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.scheduling.annotation.Scheduled;
+//import org.springframework.stereotype.Component;
+//
+//import javax.annotation.Resource;
 
 //@Slf4j
 //@Component

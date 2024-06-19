@@ -94,5 +94,5 @@ public interface UserInfoMapper<T, P> extends BaseMapper{
 
 	Integer deleteByNickName(@Param("nickName") String nickName);
 
-	Integer updateUserSpace(@Param("userId") String userId,@Param("userSpace")  Long userSpace,@Param("totalSpace")  Long totalSpace);
+	Integer updateUserSpace(@Param("userId") String userId,@Param("useSpace")  Long useSpace,@Param("totalSpace")  Long totalSpace);
     }

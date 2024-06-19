@@ -6,6 +6,8 @@ public class Constants {
     public static final Integer LENGTH_10=10;
     public static final Integer LENGTH_15=15;
     public static final Integer LENGTH_30=30;
+    public static final Integer LENGTH_150=150;
+
 
     public static final Long KB=1024L;
     public static final Long MB=1024 * 1024L;
@@ -25,6 +27,7 @@ public class Constants {
 
     public static final String FILE_FOLDER_AVATAR_NAME="avatar/";
     public static final String AVATAR_SUFFIX=".jpg";
+    public static final String IMAGE_PNG_SUFFIX=".png";
     public static final String AVATAR_DEFULT="defult_avatar.jpg";
 
 
@@ -44,6 +47,10 @@ public class Constants {
 
     public static final String REDIS_KEYS_EMAIL_CODE_REGISTER="redis_keys_email_code_register";
     public static final String REDIS_KEYS_EMAIL_CODE_BACK="redis_keys_email_code_back";
+
+
+    public static final String TS_NAME="index.ts";
+    public static final String M3U8_NAME="index.m3u8";
 
 
 }

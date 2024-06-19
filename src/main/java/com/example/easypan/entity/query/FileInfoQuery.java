@@ -1,5 +1,6 @@
 package com.example.easypan.entity.query;
 
+import java.util.Arrays;
 import java.util.Date;
 import com.example.easypan.entity.query.BaseQuery;
 
@@ -133,7 +134,18 @@ public class FileInfoQuery extends BaseQuery{
 	 */
 	private Integer delFlag;
 
-	public void setFileId(String fileId) {
+	private String[] fileIdArray;
+
+
+		public String[] getFileIdArray() {
+			return fileIdArray;
+		}
+
+		public void setFileIdArray(String[] fileIdArray) {
+			this.fileIdArray = fileIdArray;
+		}
+
+		public void setFileId(String fileId) {
 		this.fileId=fileId;
 	}
 

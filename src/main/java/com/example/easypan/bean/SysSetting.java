@@ -11,7 +11,7 @@ public class SysSetting implements Serializable {
 
     private String redisterMailContent="你好，你的邮箱验证码是: %s,15分钟内有效";
 
-    private Integer userInitUserSpace=5;
+    private Integer userInitUserSpace=500;
 
     public String getRedisterMailTitle() {
         return redisterMailTitle;

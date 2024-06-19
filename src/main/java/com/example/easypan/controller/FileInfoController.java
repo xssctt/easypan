@@ -18,9 +18,15 @@ import com.example.easypan.enums.PageSize;
 import com.example.easypan.service.FileInfoService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.example.easypan.service.impl.FileInfoServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +44,9 @@ import org.springframework.web.multipart.MultipartFile;
 	 */
 @RestController("fileInfoController")
 @RequestMapping("/fileInfo")
-public class FileInfoController extends ABaseController{
+public class FileInfoController extends CommonFileController{
+
+	private static final Logger logger= LoggerFactory.getLogger(FileInfoServiceImpl.class);
 
 	@Resource
 	private FileInfoService fileInfoService;
@@ -91,27 +99,95 @@ public class FileInfoController extends ABaseController{
 									   @VerifyParam(required = true) Integer chunks){
 
 			SessionWebUserDto sessionWebUserDto = getSessionWebUserDto(session);
+			logger.info("===============================>>>>"+multipartFile.getOriginalFilename());
+			logger.info("===============================>>>>"+multipartFile.getName());
+			//UploadResultDto uploadResultDto = fileInfoService.uploadFile(sessionWebUserDto, fileId, multipartFile, multipartFile.getOriginalFilename(), fileMd5, filePid, chunkIndex, chunks);
 			UploadResultDto uploadResultDto = fileInfoService.uploadFile(sessionWebUserDto, fileId, multipartFile, fileName, fileMd5, filePid, chunkIndex, chunks);
-
-
 
 
 			return getSuccessResponseVo(uploadResultDto);
 		}
 
 
+	/**
+	 *
+	 * @param response
+	 * @param imageFolder
+	 * @param imageName
+	 * @return
+	 */
+
+		//通过文件名获取路径
+		@RequestMapping("/getImage/{imageFolder}/{imageName}")
+		@GlobalInterceptor(chackparams = true)
+		public void getImage(HttpServletResponse response,
+									 @PathVariable("imageFolder") String imageFolder,
+									 @PathVariable("imageName") String imageName){
+			super.getImage(response,imageFolder,imageName);
+
+		}
+
+	/**
+	 *    获取视频的  .m3u8/.ts
+	 * @param response
+	 * @param session
+	 * @param fileId   获取index.m3u8传值 fileId(moyu/xss)   获取.ts  传值 fileId_0000.ts
+	 * @return
+	 */
+
+		@RequestMapping("/ts/getVideoInfo/{fileId}")
+		@GlobalInterceptor(chackparams = true)
+		public void getVideoInfo(HttpServletResponse response,
+									   HttpSession session,
+									  @PathVariable("fileId") String fileId){
+			super.getFile(response,getSessionWebUserDto(session).getUserid(),fileId);
+		}
+
+	/**
+	 *   获取文本文件
+	 * @param response
+	 * @param session
+	 * @param fileId  找 hq.txt  传值hq
+	 * @return
+	 */
+		@RequestMapping("/getFile/{fileId}")
+		@GlobalInterceptor(chackparams = true)
+		public void getFile(HttpServletResponse response,
+									   HttpSession session,
+									   @PathVariable("fileId") String fileId){
+			super.getFile(response,getSessionWebUserDto(session).getUserid(),fileId);
+		}
 
 
 
+		@RequestMapping("/newFolder")
+		@GlobalInterceptor(chackparams = true)
+		public ResponseVo newFolder(HttpServletResponse response,
+							HttpSession session,
+							@VerifyParam(required = true) String filePid,
+							@VerifyParam(required = true)  String fileName){
+
+			SessionWebUserDto sessionWebUserDto = getSessionWebUserDto(session);
 
 
+			FileInfo fileInfo = fileInfoService.newFolder(filePid, sessionWebUserDto.getUserid(), fileName);
+
+			return getSuccessResponseVo(fileInfo);
+		}
 
 
+	@RequestMapping("/getFolderInfo")
+	@GlobalInterceptor(chackparams = true)
+	public ResponseVo getFolderInfo(HttpServletResponse response,
+								HttpSession session,
+								@VerifyParam(required = true) String path){
 
+		SessionWebUserDto sessionWebUserDto = getSessionWebUserDto(session);
 
+		super.getFolderInfo(sessionWebUserDto.getUserid(),path);
 
-
-
+		return getSuccessResponseVo(null);
+	}
 
 
 

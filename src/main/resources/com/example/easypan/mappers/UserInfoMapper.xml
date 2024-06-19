@@ -533,8 +533,8 @@
 			</if>
 		</set>
 		where user_id=#{userId}
-			<if test="userSpace != null">
-				and <![CDATA[	(use_space+#{userSpace}) <= total_space	]]>
+			<if test="useSpace != null">
+				and <![CDATA[	(use_space+#{useSpace}) <= total_space	]]>
 			</if>
 			<if test="totalSpace != null">
 				and <![CDATA[	(total_space+#{totalSpace}) > use_space	]]>

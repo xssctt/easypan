@@ -26,6 +26,12 @@ public class ABaseController {
     protected static final String STATUS_ERROR="error";
     private static final Logger logger= LoggerFactory.getLogger(ABaseController.class);
 
+    /**
+     *  正确响应
+     * @param t
+     * @param <T>
+     * @return
+     */
     protected <T> ResponseVo getSuccessResponseVo(T t){
         ResponseVo<T> responseVo=new ResponseVo<>();
         responseVo.setStatus(STATUS_SUCCESS);
@@ -36,6 +42,13 @@ public class ABaseController {
         return responseVo;
     }
 
+    /**
+     *  错误响应
+     * @param e
+     * @param t
+     * @param <T>
+     * @return
+     */
     protected <T> ResponseVo getBusinessErrorResponseVo(BusinessException e, T t){
         ResponseVo<T> responseVo=new ResponseVo<>();
         responseVo.setStatus(STATUS_ERROR);
@@ -44,6 +57,12 @@ public class ABaseController {
         return responseVo;
     }
 
+    /**
+     * 错误响应
+     * @param t
+     * @param <T>
+     * @return
+     */
     protected <T> ResponseVo getServerErrorResponseVo(T t){
         ResponseVo<T> responseVo=new ResponseVo<>();
         responseVo.setStatus(STATUS_ERROR);
@@ -54,6 +73,14 @@ public class ABaseController {
         return responseVo;
     }
 
+    /**
+     *  转换流拷贝  将PaginationResultVo<A> 转换PaginationResultVo<B>
+     * @param result A
+     * @param classz B.class
+     * @param <S>
+     * @param <T>
+     * @return  PaginationResultVo<B>
+     */
     protected <S,T> PaginationResultVo<T> convert2PaginationVo(PaginationResultVo<S> result,Class<T> classz){
         PaginationResultVo<T> resultVo =new PaginationResultVo<>();
         resultVo.setList(CopyTools.copyList(result.getList(),classz));
@@ -65,7 +92,11 @@ public class ABaseController {
     }
 
 
-
+    /**
+     *  读文件
+     * @param response
+     * @param filepath
+     */
     protected void readFile(HttpServletResponse response,String filepath){
         if (!StringTools.pathIsOk(filepath)){
             return;
@@ -114,6 +145,11 @@ public class ABaseController {
 
     }
 
+    /**
+     * 保存文件
+     * @param avatarFile
+     * @param multipartFile
+     */
     protected void saveFile(String avatarFile, MultipartFile multipartFile){
 
         //对文件 multipartFile是否存在判断
@@ -170,10 +206,18 @@ public class ABaseController {
     }
 
 
+    /**
+     *   很具session获取用户信息
+     * @param session
+     * @return
+     */
     protected SessionWebUserDto getSessionWebUserDto(HttpSession session){
         return (SessionWebUserDto) session.getAttribute(Constants.SESSION_KEY);
     }
 
+    protected String getMonthByPath(String path){
+        return path.substring(0,path.indexOf("/"));
+    }
 }
 
 

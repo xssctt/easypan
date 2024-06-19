@@ -79,4 +79,7 @@ public interface FileInfoService {
 							   Integer chunkIndex, Integer chunks);
 
 
+    FileInfo newFolder(String filePid, String userId, String folderName);
+
+
 }
